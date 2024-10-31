@@ -15,6 +15,9 @@ spring:
         format_sql: true
   server:
     port: 8082  # Puerto específico para gameservice, puede ajustarse según necesidades
+  sql:
+    init:
+      mode: never
 
 eureka:
   client:

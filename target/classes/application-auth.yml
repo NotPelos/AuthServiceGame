@@ -1,21 +1,22 @@
 spring:
-  application:
-    name: authservice
   datasource:
-    url: jdbc:mysql://localhost:3306/authdb
-    username: root
-    password: password
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/authdb  
+    username: root                           
+    password: password                       
+    driver-class-name: com.mysql.cj.jdbc.Driver  
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect  
+    show-sql: true
   # Configuración del servidor
   server:
     port: 8081  # Puerto específico para authservice, puede cambiarse según necesidades
+  sql:
+    init:
+      mode: never 
 
 eureka:
   client:
@@ -24,7 +25,7 @@ eureka:
   instance:
     prefer-ip-address: true
 
-# Configuración del JWT (si aplicable)
+# Configuración del JWT
 jwt:
   secret: mySecretKey
-  expiration: 3600000  # Expiración del token en milisegundos (ejemplo: 1 hora)
+  expiration: 3600000  # Expiración del token en milisegundos

@@ -1,5 +1,6 @@
 package com.example.authservice.web;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,12 +30,15 @@ public class UserController {
     private final JwtUtil jwtUtil;
     
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
         User user = registerUserUseCase.register(userDTO.getUsername(), userDTO.getEmail(), userDTO.getPassword());
-        return ResponseEntity.ok(user);
+        UserDTO response = new UserDTO();
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> login(@RequestBody AuthRequest authRequest) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
@@ -43,6 +47,7 @@ public class UserController {
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
         return ResponseEntity.ok(jwt);
     }
+
 
     @Data
     static class UserDTO {

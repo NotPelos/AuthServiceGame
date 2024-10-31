@@ -1,0 +1,28 @@
+spring:
+  mvc:
+    contentnegotiation:
+      favor-path-extension: false
+      favor-parameter: false
+      media-types:
+        json: application/json
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    show-sql: true
+  sql:
+    init:
+      mode: never
+jwt:
+  secret: "3b703b69683d2e558d402606706ac2fdbdab505f47116f7ae7685ff351f91da49b6bbb6a2055dd70d3cbf0b389e869e67a29bb1ac9e99e8b0c82707912815c3191fc68537d82b45bb5068cf20c42b2f325aac87565266548024029bd463d9689fd52cbf8c7c4b2d617e817da7d24658acb4380ed7739b465000049dc76946b803b0e81e633110fb45f4a9ed58c5db6cec1bbc7d68c6196ed7e082d533e3102ba08da8a8317b7289ee4ad3baf8e4801e5829517a55571f156add4256c0b01a5d9a66d861a49782f4ad61b45e3631bf95981247117670b252c407621684c07283ac097a97ee9479e457e1e44586d483360ace9e82bb48401a7c05d2c7e82ffe861"
+  expiration: 3600000  # Expiración del token en milisegundos  
+eureka:
+  client:
+    enabled: false
