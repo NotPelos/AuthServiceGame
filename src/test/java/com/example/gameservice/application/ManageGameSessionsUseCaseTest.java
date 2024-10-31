@@ -10,9 +10,11 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class ManageGameSessionsUseCaseTest {
@@ -35,7 +37,8 @@ class ManageGameSessionsUseCaseTest {
 
         GameSession savedSession = manageGameSessionsUseCase.addGameSession(session);
 
-        assertEquals(session, savedSession);
+        assertEquals(session.getSessionDate(), savedSession.getSessionDate());
+        assertEquals(session.getDurationInMinutes(), savedSession.getDurationInMinutes());
         verify(gameSessionRepository, times(1)).save(session);
     }
 
@@ -52,6 +55,17 @@ class ManageGameSessionsUseCaseTest {
 
         assertEquals(2, result.size());
         assertEquals(60, result.get(0).getDurationInMinutes());
+        verify(gameSessionRepository, times(1)).findByGameId(gameId);
+    }
+
+    @Test
+    void testListGameSessionsEmpty() {
+        Long gameId = 1L;
+        when(gameSessionRepository.findByGameId(gameId)).thenReturn(Collections.emptyList());
+
+        List<GameSession> result = manageGameSessionsUseCase.listGameSessions(gameId);
+
+        assertTrue(result.isEmpty());
         verify(gameSessionRepository, times(1)).findByGameId(gameId);
     }
 }

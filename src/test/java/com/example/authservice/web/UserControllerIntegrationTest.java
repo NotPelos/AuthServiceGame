@@ -91,6 +91,32 @@ class UserControllerIntegrationTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN)) // Ajuste para compatibilidad
                 .andExpect(content().string(org.hamcrest.Matchers.notNullValue())); // Verifica que el token no sea nulo
     }
+    
+    @Test
+    void testRegisterUserWithDuplicateUsername() throws Exception {
+        UserController.UserDTO userDTO = new UserController.UserDTO();
+        userDTO.setUsername("testuser"); // Username duplicado
+        userDTO.setEmail("duplicate@example.com");
+        userDTO.setPassword("newpassword");
 
+        mockMvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userDTO)))
+                .andExpect(status().isBadRequest()); // Asegura que el estatus sea 400 Bad Request o el código que hayas definido
+    }
+    
+    
+    @Test
+    void testLoginWithInvalidCredentials() throws Exception {
+        UserController.AuthRequest authRequest = new UserController.AuthRequest();
+        authRequest.setUsername("testuser");
+        authRequest.setPassword("wrongpassword"); // Contraseña incorrecta
+
+        mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authRequest)))
+                .andExpect(status().isUnauthorized()) // Verifica que devuelve un estado de autorización fallida
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Bad credentials"))); // Asegura el mensaje de error
+    }
 
 }

@@ -2,6 +2,8 @@ package com.example.authservice.infrastructure.config;
 
 import com.example.authservice.infrastructure.security.JwtRequestFilter;
 import com.example.authservice.infrastructure.security.MyUserDetailsService;
+
+import jakarta.ws.rs.HttpMethod;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,8 +42,9 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeRequests()
-            .requestMatchers("/auth/**").permitAll()  // Permitir las rutas de autenticación
-            .requestMatchers("/games/**", "/gamesessions/**").authenticated()  // Proteger las rutas de juegos y sesiones
+            .requestMatchers(HttpMethod.POST, "/auth/register").permitAll() // Permitir registro a todos
+            .requestMatchers("/admin/**").hasRole("ADMIN") // Rutas solo para ADMIN
+            .requestMatchers("/player/**").hasRole("PLAYER") // Rutas solo para PLAYER
             .anyRequest().authenticated()
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

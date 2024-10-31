@@ -1,5 +1,6 @@
 package com.example.authservice.application;
 
+import com.example.authservice.domain.Role;
 import com.example.authservice.domain.User;
 import com.example.authservice.port.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,7 @@ class RegisterUserUseCaseTest {
         String password = "password123";
 
         // Crea un usuario simulado
-        User user = new User(null, username, email, password);
+        User user = new User(null, username, email, password, Role.PLAYER);
 
         // Configura el mock del repositorio para devolver el usuario simulado
         when(userRepository.save(any(User.class))).thenReturn(user);
