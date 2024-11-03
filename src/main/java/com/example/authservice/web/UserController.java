@@ -44,7 +44,7 @@ public class UserController {
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
-        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        final String jwt = jwtUtil.generateToken(userDetails.getUsername(), userDetails.getAuthorities());
         return ResponseEntity.ok(jwt);
     }
 

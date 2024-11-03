@@ -1,21 +1,25 @@
 package com.example.authservice.web;
 
 import com.example.authservice.AuthServiceApplication;
+import com.example.authservice.domain.Role;
 import com.example.authservice.domain.User;
 import com.example.authservice.infrastructure.UserJpaRepository;
 import com.example.authservice.infrastructure.security.JwtUtil;
 import com.example.authservice.port.UserRepository;
+import com.example.gameservice.application.GenerateGameReportUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -49,6 +53,9 @@ class UserControllerIntegrationTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @MockBean
+    private GenerateGameReportUseCase generateGameReportUseCase;
 
     @BeforeEach
     void setUp() {
@@ -59,10 +66,12 @@ class UserControllerIntegrationTest {
         testUser.setUsername("testuser");
         testUser.setEmail("test@example.com");
         testUser.setPassword(passwordEncoder.encode("password123")); // Contraseña encriptada
+        testUser.setRole(Role.PLAYER);
         userRepository.save(testUser);
     }
 
     @Test
+    @WithMockUser
     void testRegisterUser() throws Exception {
         UserController.UserDTO userDTO = new UserController.UserDTO();
         userDTO.setUsername("newuser");

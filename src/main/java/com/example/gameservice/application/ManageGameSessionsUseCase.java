@@ -12,10 +12,13 @@ import java.util.List;
 public class ManageGameSessionsUseCase {
 
     private final GameSessionRepository gameSessionRepository;
+    private final GenerateNotificationUseCase generateNotificationUseCase;
 
     // Añadir una nueva sesión de juego
     public GameSession addGameSession(GameSession gameSession) {
-        return gameSessionRepository.save(gameSession);
+        GameSession savedSession = gameSessionRepository.save(gameSession);
+        generateNotificationUseCase.generateSessionCompletionNotification(savedSession);
+        return savedSession;
     }
 
     // Listar todas las sesiones de un juego

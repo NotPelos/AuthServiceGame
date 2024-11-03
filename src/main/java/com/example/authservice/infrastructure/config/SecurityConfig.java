@@ -22,36 +22,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class SecurityConfig {
 
-    private final JwtRequestFilter jwtRequestFilter;
-    private final MyUserDetailsService myUserDetailsService;
+	private final JwtRequestFilter jwtRequestFilter;
+	private final MyUserDetailsService myUserDetailsService;
 
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
-        auth.userDetailsService(myUserDetailsService);
-        return auth.build();
-    }
-    
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+		AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
+		auth.userDetailsService(myUserDetailsService);
+		return auth.build();
+	}
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf().disable()
-            .authorizeRequests()
-            .requestMatchers(HttpMethod.POST, "/auth/register").permitAll() // Permitir registro a todos
-            .requestMatchers("/admin/**").hasRole("ADMIN") // Rutas solo para ADMIN
-            .requestMatchers("/player/**").hasRole("PLAYER") // Rutas solo para PLAYER
-            .anyRequest().authenticated()
-            .and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-        // Agregar el filtro JWT para validar los tokens en cada solicitud
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.csrf().disable().authorizeRequests().requestMatchers("/auth/register", "/auth/login").permitAll() // Permitir
+																												// sin
+																												// autenticación
+				.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/player/**").hasRole("PLAYER")
+				.anyRequest().authenticated().and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        return http.build();
-    }
+		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
+	}
 }

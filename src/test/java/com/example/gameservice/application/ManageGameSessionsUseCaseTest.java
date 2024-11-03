@@ -1,5 +1,6 @@
 package com.example.gameservice.application;
 
+import com.example.gameservice.domain.Game;
 import com.example.gameservice.domain.GameSession;
 import com.example.gameservice.port.GameSessionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,9 @@ class ManageGameSessionsUseCaseTest {
 
     @InjectMocks
     private ManageGameSessionsUseCase manageGameSessionsUseCase;
+    
+    @Mock
+    private GenerateNotificationUseCase generateNotificationUseCase; // Agregar el mock para GenerateNotificationUseCase
 
     @BeforeEach
     void setUp() {
@@ -32,7 +36,12 @@ class ManageGameSessionsUseCaseTest {
 
     @Test
     void testAddGameSession() {
-        GameSession session = new GameSession(null, null, LocalDateTime.now(), 60);
+        // Crear un juego de prueba y asignarlo a la sesión
+        Game game = new Game();
+        game.setId(1L);
+        game.setTitle("Juego de Prueba");
+
+        GameSession session = new GameSession(null, game, LocalDateTime.now(), 60); // Asignar el juego aquí
         when(gameSessionRepository.save(session)).thenReturn(session);
 
         GameSession savedSession = manageGameSessionsUseCase.addGameSession(session);
@@ -40,6 +49,7 @@ class ManageGameSessionsUseCaseTest {
         assertEquals(session.getSessionDate(), savedSession.getSessionDate());
         assertEquals(session.getDurationInMinutes(), savedSession.getDurationInMinutes());
         verify(gameSessionRepository, times(1)).save(session);
+        verify(generateNotificationUseCase, times(1)).generateSessionCompletionNotification(session); // Verificar que se llame a generateNotificationUseCase
     }
 
     @Test
