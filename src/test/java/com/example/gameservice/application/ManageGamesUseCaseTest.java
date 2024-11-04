@@ -161,4 +161,21 @@ class ManageGamesUseCaseTest {
         assertThrows(EntityNotFoundException.class, () -> manageGamesUseCase.getGameById(gameId));
         verify(gameRepository, times(1)).findById(gameId);
     }
+    
+    @Test
+    void testUpdateGame() {
+        Long gameId = 1L;
+        Game existingGame = new Game(gameId, null, "Old Title", "Old Description", "Old Genre");
+        Game updatedGame = new Game(gameId, null, "New Title", "New Description", "New Genre");
+
+        when(gameRepository.findById(gameId)).thenReturn(Optional.of(existingGame));
+        when(gameRepository.save(any(Game.class))).thenReturn(updatedGame);
+
+        Game result = manageGamesUseCase.updateGame(gameId, updatedGame);
+
+        assertEquals("New Title", result.getTitle());
+        assertEquals("New Description", result.getDescription());
+        assertEquals("New Genre", result.getGenre());
+        verify(gameRepository, times(1)).save(existingGame);
+    }
 }

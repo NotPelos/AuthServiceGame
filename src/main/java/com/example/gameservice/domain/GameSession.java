@@ -26,4 +26,10 @@ public class GameSession {
 
     @Min(1)
     private int durationInMinutes;  // Duración de la sesión en minutos
+
+    // Nuevos campos de rendimiento
+    private int score;
+    private int level;
+    private int achievements;
+    private String sessionNotes;
 }

@@ -49,4 +49,19 @@ public class GameController {
         List<Game> games = manageGamesUseCase.listGames();
         return ResponseEntity.ok(games);
     }
+    
+ // Endpoint para modificar un juego existente por su ID
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Game> updateGame(@PathVariable Long id, @Valid @RequestBody Game updatedGame, Principal principal) {
+        String username = principal.getName();
+        Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
+
+        if (user.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        updatedGame.setUser(user.get()); // Asignar el usuario autenticado al juego
+        Game modifiedGame = manageGamesUseCase.updateGame(id, updatedGame);
+        return ResponseEntity.ok(modifiedGame);
+    }
 }

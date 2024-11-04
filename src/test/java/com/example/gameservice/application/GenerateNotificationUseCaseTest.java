@@ -30,7 +30,7 @@ class GenerateNotificationUseCaseTest {
     void testGenerateSessionCompletionNotification() {
         // Crear un usuario de prueba y asignarle un ID
         User user = new User();
-        user.setId(1L); // Asegúrate de asignar un ID u otros atributos necesarios
+        user.setId(1L); 
         user.setUsername("testuser");
 
         // Crear un juego de prueba y asignarle el usuario

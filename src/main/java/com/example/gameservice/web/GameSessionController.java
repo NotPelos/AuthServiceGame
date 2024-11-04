@@ -27,4 +27,18 @@ public class GameSessionController {
         List<GameSession> sessions = manageGameSessionsUseCase.listGameSessions(gameId);
         return ResponseEntity.ok(sessions);
     }
+
+    // Endpoint para actualizar una sesión de juego
+    @PutMapping("/update/{sessionId}")
+    public ResponseEntity<GameSession> updateGameSession(@PathVariable Long sessionId, @RequestBody GameSession updatedSession) {
+        GameSession modifiedSession = manageGameSessionsUseCase.updateGameSession(sessionId, updatedSession);
+        return ResponseEntity.ok(modifiedSession);
+    }
+
+    // Endpoint para eliminar una sesión de juego
+    @DeleteMapping("/delete/{sessionId}")
+    public ResponseEntity<Void> deleteGameSession(@PathVariable Long sessionId) {
+        manageGameSessionsUseCase.deleteGameSession(sessionId);
+        return ResponseEntity.noContent().build();
+    }
 }

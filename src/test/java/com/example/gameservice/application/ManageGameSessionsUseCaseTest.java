@@ -3,6 +3,9 @@ package com.example.gameservice.application;
 import com.example.gameservice.domain.Game;
 import com.example.gameservice.domain.GameSession;
 import com.example.gameservice.port.GameSessionRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,8 +16,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -41,7 +46,7 @@ class ManageGameSessionsUseCaseTest {
         game.setId(1L);
         game.setTitle("Juego de Prueba");
 
-        GameSession session = new GameSession(null, game, LocalDateTime.now(), 60); // Asignar el juego aquí
+        GameSession session = new GameSession(null, game, LocalDateTime.now(), 60, 0, 0, 0, null);
         when(gameSessionRepository.save(session)).thenReturn(session);
 
         GameSession savedSession = manageGameSessionsUseCase.addGameSession(session);
@@ -56,8 +61,8 @@ class ManageGameSessionsUseCaseTest {
     void testListGameSessions() {
         Long gameId = 1L;
         List<GameSession> sessions = Arrays.asList(
-            new GameSession(1L, null, LocalDateTime.now(), 60),
-            new GameSession(2L, null, LocalDateTime.now(), 120)
+            new GameSession(1L, null, LocalDateTime.now(), 60, 0, 0, 0, null),
+            new GameSession(2L, null, LocalDateTime.now(), 120, 0, 0, 0, null)
         );
         when(gameSessionRepository.findByGameId(gameId)).thenReturn(sessions);
 
@@ -77,5 +82,43 @@ class ManageGameSessionsUseCaseTest {
 
         assertTrue(result.isEmpty());
         verify(gameSessionRepository, times(1)).findByGameId(gameId);
+    }
+    
+    @Test
+    void testUpdateGameSession() {
+        Long sessionId = 1L;
+        Game game = new Game();
+        game.setId(1L);
+
+        GameSession existingSession = new GameSession(sessionId, game, LocalDateTime.now(), 60, 0, 0, 0, null);
+        GameSession updatedSession = new GameSession(sessionId, game, LocalDateTime.now(), 90, 0, 0, 0, null);
+
+        when(gameSessionRepository.findById(sessionId)).thenReturn(Optional.of(existingSession));
+        when(gameSessionRepository.save(any(GameSession.class))).thenReturn(updatedSession);
+
+        GameSession result = manageGameSessionsUseCase.updateGameSession(sessionId, updatedSession);
+
+        assertEquals(90, result.getDurationInMinutes());
+        verify(gameSessionRepository, times(1)).save(existingSession);
+    }
+
+    @Test
+    void testDeleteGameSession() {
+        Long sessionId = 1L;
+        when(gameSessionRepository.existsById(sessionId)).thenReturn(true);
+        doNothing().when(gameSessionRepository).deleteById(sessionId);
+
+        manageGameSessionsUseCase.deleteGameSession(sessionId);
+
+        verify(gameSessionRepository, times(1)).deleteById(sessionId);
+    }
+
+    @Test
+    void testDeleteGameSessionNotFound() {
+        Long sessionId = 1L;
+        when(gameSessionRepository.existsById(sessionId)).thenReturn(false);
+
+        assertThrows(EntityNotFoundException.class, () -> manageGameSessionsUseCase.deleteGameSession(sessionId));
+        verify(gameSessionRepository, times(1)).existsById(sessionId);
     }
 }

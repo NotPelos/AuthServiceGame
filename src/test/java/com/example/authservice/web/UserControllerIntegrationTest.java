@@ -111,7 +111,7 @@ class UserControllerIntegrationTest {
         mockMvc.perform(post("/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userDTO)))
-                .andExpect(status().isBadRequest()); // Asegura que el estatus sea 400 Bad Request o el código que hayas definido
+                .andExpect(status().isBadRequest()); // Asegura que el estatus sea 400 Bad Request
     }
     
     

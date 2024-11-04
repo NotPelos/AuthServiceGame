@@ -35,8 +35,8 @@ class GenerateGameReportUseCaseTest {
         LocalDate endDate = LocalDate.of(2024, 1, 31);
 
         List<GameSession> sessions = Arrays.asList(
-            new GameSession(1L, null, startDate.atStartOfDay(), 120),
-            new GameSession(2L, null, startDate.plusDays(1).atStartOfDay(), 90)
+            new GameSession(1L, null, startDate.atStartOfDay(), 120, 0, 0, 0, null),
+            new GameSession(2L, null, startDate.plusDays(1).atStartOfDay(), 90, 0, 0, 0, null)
         );
 
         when(gameSessionRepository.findByUserIdAndSessionDateBetween(userId, startDate, endDate)).thenReturn(sessions);
